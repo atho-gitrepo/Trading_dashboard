@@ -39,25 +39,4 @@ export const formatters = {
     const d = typeof date === 'string' ? parseISO(date) : date;
     return formatDistanceToNow(d, { addSuffix: true });
   },
-
-  scoreGrade: (score: number): { label: string; color: string } => {
-    if (score >= 85) return { label: 'A', color: 'text-green-400' };
-    if (score >= 75) return { label: 'B', color: 'text-blue-400' };
-    if (score >= 65) return { label: 'C', color: 'text-yellow-400' };
-    if (score >= 50) return { label: 'D', color: 'text-orange-400' };
-    return { label: 'F', color: 'text-red-400' };
-  },
-
-  statusColor: (status: string): string => {
-    const colors: Record<string, string> = {
-      ACTIVE: 'bg-yellow-500/20 text-yellow-400',
-      PROFIT: 'bg-green-500/20 text-green-400',
-      'PARTIAL_PROFIT': 'bg-green-500/20 text-green-400',
-      LOSS: 'bg-red-500/20 text-red-400',
-      'PARTIAL_LOSS': 'bg-red-500/20 text-red-400',
-      'BREAK_EVEN': 'bg-gray-500/20 text-gray-400',
-      CLOSED: 'bg-gray-500/20 text-gray-400',
-    };
-    return colors[status] || 'bg-gray-500/20 text-gray-400';
-  },
 };
