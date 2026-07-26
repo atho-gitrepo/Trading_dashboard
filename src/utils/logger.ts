@@ -19,31 +19,31 @@ class Logger {
     return levels.indexOf(level) >= levels.indexOf(this.logLevel);
   }
 
-  private formatMessage(level: LogLevel, message: string, data?: unknown): string {
+  private formatMessage(level: LogLevel, message: string, data?: any): string {
     const timestamp = new Date().toISOString();
     const prefix = `[${timestamp}] ${level.toUpperCase()}`;
     return data ? `${prefix}: ${message} ${JSON.stringify(data)}` : `${prefix}: ${message}`;
   }
 
-  debug(message: string, data?: unknown): void {
+  debug(message: string, data?: any): void {
     if (this.shouldLog('debug')) {
       console.debug(this.formatMessage('debug', message, data));
     }
   }
 
-  info(message: string, data?: unknown): void {
+  info(message: string, data?: any): void {
     if (this.shouldLog('info')) {
       console.info(this.formatMessage('info', message, data));
     }
   }
 
-  warn(message: string, data?: unknown): void {
+  warn(message: string, data?: any): void {
     if (this.shouldLog('warn')) {
       console.warn(this.formatMessage('warn', message, data));
     }
   }
 
-  error(message: string, error?: unknown): void {
+  error(message: string, error?: any): void {
     if (this.shouldLog('error')) {
       console.error(this.formatMessage('error', message, error));
     }
@@ -60,7 +60,7 @@ class Logger {
       const duration = performance.now() - start;
       this.performanceLogs.delete(operation);
       this.debug(`Performance: ${operation} completed in ${duration.toFixed(2)}ms`);
-
+      
       if (duration > 100) {
         this.warn(`Performance: ${operation} took ${duration.toFixed(2)}ms (slow)`);
       }
