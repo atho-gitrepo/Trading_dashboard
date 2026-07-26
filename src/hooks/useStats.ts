@@ -24,14 +24,6 @@ export function useStats(activeSignals: TradeSignal[], resolvedSignals: TradeSig
       ? totalProfit / totalLoss 
       : totalProfit > 0 ? Infinity : 0;
     
-    const highScore = allResolved.filter(s => (s.total_score || 0) >= 80);
-    const mediumScore = allResolved.filter(s => 
-      (s.total_score || 0) >= 65 && (s.total_score || 0) < 80
-    );
-    const lowScore = allResolved.filter(s => 
-      (s.total_score || 0) < 65 && (s.total_score || 0) > 0
-    );
-    
     const avgScore = allResolved.length > 0 
       ? allResolved.reduce((sum, s) => sum + (s.total_score || 0), 0) / allResolved.length 
       : 0;
@@ -42,9 +34,6 @@ export function useStats(activeSignals: TradeSignal[], resolvedSignals: TradeSig
       totalProfitable: profitable.length,
       totalLosing: losing.length,
       totalBreakEven: breakEven.length,
-      totalHighScore: highScore.length,
-      totalMediumScore: mediumScore.length,
-      totalLowScore: lowScore.length,
       totalPnl,
       winRate,
       profitFactor,
