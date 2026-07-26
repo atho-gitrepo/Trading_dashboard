@@ -6,22 +6,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;  // ← Change from 8080 to 3000
 
-// Serve static files
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Handle SPA routing - serve index.html for all routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-// Start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server running on http://0.0.0.0:${PORT}`);
 });
 
-// Handle errors
 app.on('error', (error) => {
   console.error('❌ Server error:', error);
 });
