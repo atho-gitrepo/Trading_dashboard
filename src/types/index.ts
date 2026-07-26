@@ -6,7 +6,7 @@ export interface TradeSignal {
   stop_loss: number;
   take_profit: number;
   confidence: number;
-  status: 'ACTIVE' | 'PROFIT' | 'LOSS' | 'CLOSED' | 'PARTIAL_PROFIT' | 'PARTIAL_LOSS' | 'BREAK_EVEN';
+  status: string;
   entry_time: string;
   exit_time?: string;
   timestamp: string;
@@ -16,17 +16,10 @@ export interface TradeSignal {
   bb_position?: number;
   volume_ratio?: number;
   tdi_zone?: string;
-  tdi_zone_standardized?: string;
-  strategy_version?: string;
   exit_price?: number;
   pnl?: number;
   pnl_percent?: number;
-  fees?: number;
-  bars_held?: number;
-  age_minutes?: number;
   resolved_at?: string;
-  original_doc_id?: string;
-  rejection_reason?: string;
   isActive?: boolean;
 }
 
@@ -36,9 +29,6 @@ export interface DashboardStats {
   totalProfitable: number;
   totalLosing: number;
   totalBreakEven: number;
-  totalHighScore: number;
-  totalMediumScore: number;
-  totalLowScore: number;
   totalPnl: number;
   winRate: number;
   profitFactor: number;
@@ -51,11 +41,4 @@ export interface DailyStats {
   trades: number;
   wins: number;
   losses: number;
-}
-
-export interface FilterState {
-  type: 'All' | 'Active' | 'Winners' | 'Losers' | 'BreakEven';
-  search: string;
-  sortBy: 'date' | 'pnl' | 'score';
-  sortOrder: 'asc' | 'desc';
 }
