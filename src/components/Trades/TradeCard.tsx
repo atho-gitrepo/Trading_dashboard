@@ -1,5 +1,5 @@
-import { TradeSignal } from '@/types';
-import { formatters } from '@/utils/formatters';
+import { TradeSignal } from '../../types';
+import { formatters } from '../../utils/formatters';
 
 interface TradeCardProps {
   signal: TradeSignal & { isActive?: boolean };
