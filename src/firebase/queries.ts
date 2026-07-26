@@ -6,12 +6,8 @@ import {
   orderBy,
   limit,
   onSnapshot,
-  getDocs,
-  doc,
-  getDoc,
 } from 'firebase/firestore';
-import { TradeSignal } from '@/types';
-import { logger } from '@/utils/logger';
+import { TradeSignal } from '../types';
 
 const ACTIVE_COLLECTION = 'active_signals';
 const RESOLVED_COLLECTION = 'resolved_signals';
@@ -48,7 +44,7 @@ export class FirebaseQueries {
         onUpdate(signals);
       },
       error: (error) => {
-        logger.error('Active signals subscription error', error);
+        console.error('Active signals subscription error', error);
         onError(error);
       },
     });
@@ -74,7 +70,7 @@ export class FirebaseQueries {
         onUpdate(signals);
       },
       error: (error) => {
-        logger.error('Resolved signals subscription error', error);
+        console.error('Resolved signals subscription error', error);
         onError(error);
       },
     });
