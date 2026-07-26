@@ -23,11 +23,9 @@ export function useSignals(): UseSignalsResult {
     setLoading(true);
     setError(null);
     
-    // Clear existing subscriptions
     unsubscribesRef.current.forEach(unsubscribe => unsubscribe());
     unsubscribesRef.current = [];
 
-    // Subscribe to active signals
     const unsubscribeActive = firebaseQueries.subscribeActiveSignals(
       (signals) => {
         setActiveSignals(signals);
@@ -42,7 +40,6 @@ export function useSignals(): UseSignalsResult {
     );
     unsubscribesRef.current.push(unsubscribeActive);
 
-    // Subscribe to resolved signals
     const unsubscribeResolved = firebaseQueries.subscribeResolvedSignals(
       (signals) => {
         setResolvedSignals(signals);
@@ -58,8 +55,6 @@ export function useSignals(): UseSignalsResult {
 
   useEffect(() => {
     refresh();
-
-    // Cleanup subscriptions on unmount
     return () => {
       unsubscribesRef.current.forEach(unsubscribe => unsubscribe());
     };
