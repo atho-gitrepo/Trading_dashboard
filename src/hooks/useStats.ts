@@ -24,7 +24,6 @@ export function useStats(activeSignals: TradeSignal[], resolvedSignals: TradeSig
       ? totalProfit / totalLoss 
       : totalProfit > 0 ? Infinity : 0;
     
-    // Score distribution
     const highScore = allResolved.filter(s => (s.total_score || 0) >= 80);
     const mediumScore = allResolved.filter(s => 
       (s.total_score || 0) >= 65 && (s.total_score || 0) < 80
