@@ -1,9 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { 
-  initializeFirestore, 
-  persistentLocalCache, 
-  persistentMultipleTabManager 
-} from 'firebase/firestore';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { logger } from '@/utils/logger';
 
@@ -16,24 +12,17 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase with minimal configuration
 const app = initializeApp(firebaseConfig);
 
-// Optimized Firestore with persistent cache
 const db = initializeFirestore(app, {
   localCache: persistentLocalCache({
     tabManager: persistentMultipleTabManager(),
   }),
-  experimentalAutoDetectLongPolling: true,
 });
 
-// Auth with persistence
 const auth = getAuth(app);
 setPersistence(auth, browserLocalPersistence).catch((error) => {
   logger.error('Failed to set auth persistence', error);
 });
-
-// Log initialization
-logger.info('Firebase initialized with persistent cache');
 
 export { db, auth };
