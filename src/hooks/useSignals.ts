@@ -1,22 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { TradeSignal } from '@/types';
 import { firebaseQueries } from '@/firebase/queries';
-import { logger } from '@/utils/logger';
 
-interface UseSignalsResult {
-  activeSignals: TradeSignal[];
-  resolvedSignals: TradeSignal[];
-  loading: boolean;
-  error: Error | null;
-  refresh: () => void;
-}
-
-export function useSignals(): UseSignalsResult {
+export function useSignals() {
   const [activeSignals, setActiveSignals] = useState<TradeSignal[]>([]);
   const [resolvedSignals, setResolvedSignals] = useState<TradeSignal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  
   const unsubscribesRef = useRef<(() => void)[]>([]);
 
   const refresh = useCallback(() => {
@@ -30,10 +20,8 @@ export function useSignals(): UseSignalsResult {
       (signals) => {
         setActiveSignals(signals);
         setLoading(false);
-        logger.debug(`Active signals updated: ${signals.length}`);
       },
       (err) => {
-        logger.error('Active signals subscription error', err);
         setError(err);
         setLoading(false);
       }
@@ -43,10 +31,8 @@ export function useSignals(): UseSignalsResult {
     const unsubscribeResolved = firebaseQueries.subscribeResolvedSignals(
       (signals) => {
         setResolvedSignals(signals);
-        logger.debug(`Resolved signals updated: ${signals.length}`);
       },
       (err) => {
-        logger.error('Resolved signals subscription error', err);
         setError(err);
       }
     );
@@ -60,11 +46,5 @@ export function useSignals(): UseSignalsResult {
     };
   }, [refresh]);
 
-  return {
-    activeSignals,
-    resolvedSignals,
-    loading,
-    error,
-    refresh,
-  };
+  return { activeSignals, resolvedSignals, loading, error, refresh };
 }
