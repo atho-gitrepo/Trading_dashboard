@@ -9,7 +9,6 @@ import {
   getDocs,
   doc,
   getDoc,
-  Firestore,
 } from 'firebase/firestore';
 import { TradeSignal } from '@/types';
 import { logger } from '@/utils/logger';
@@ -19,11 +18,8 @@ const RESOLVED_COLLECTION = 'resolved_signals';
 
 export class FirebaseQueries {
   private static instance: FirebaseQueries;
-  private db: Firestore;
 
-  private constructor() {
-    this.db = db;
-  }
+  private constructor() {}
 
   static getInstance(): FirebaseQueries {
     if (!FirebaseQueries.instance) {
@@ -32,16 +28,12 @@ export class FirebaseQueries {
     return FirebaseQueries.instance;
   }
 
-  /**
-   * Subscribe to active signals with real-time updates
-   * Uses onSnapshot for efficient real-time updates
-   */
   subscribeActiveSignals(
     onUpdate: (signals: TradeSignal[]) => void,
     onError: (error: Error) => void
   ): () => void {
     const q = query(
-      collection(this.db, ACTIVE_COLLECTION),
+      collection(db, ACTIVE_COLLECTION),
       where('status', '==', 'ACTIVE'),
       orderBy('entry_time', 'desc')
     );
@@ -66,16 +58,12 @@ export class FirebaseQueries {
     });
   }
 
-  /**
-   * Subscribe to resolved signals with real-time updates
-   * Limited to last 100 signals for performance
-   */
   subscribeResolvedSignals(
     onUpdate: (signals: TradeSignal[]) => void,
     onError: (error: Error) => void
   ): () => void {
     const q = query(
-      collection(this.db, RESOLVED_COLLECTION),
+      collection(db, RESOLVED_COLLECTION),
       orderBy('resolved_at', 'desc'),
       limit(100)
     );
@@ -100,21 +88,16 @@ export class FirebaseQueries {
     });
   }
 
-  /**
-   * Get a single signal by ID (from either collection)
-   */
   async getSignalById(id: string): Promise<TradeSignal | null> {
     logger.debug(`Fetching signal by ID: ${id}`);
     
     try {
-      // Check active first
-      const activeDoc = await getDoc(doc(this.db, ACTIVE_COLLECTION, id));
+      const activeDoc = await getDoc(doc(db, ACTIVE_COLLECTION, id));
       if (activeDoc.exists()) {
         return { doc_id: id, ...activeDoc.data(), isActive: true } as TradeSignal;
       }
 
-      // Check resolved
-      const resolvedDoc = await getDoc(doc(this.db, RESOLVED_COLLECTION, id));
+      const resolvedDoc = await getDoc(doc(db, RESOLVED_COLLECTION, id));
       if (resolvedDoc.exists()) {
         return { doc_id: id, ...resolvedDoc.data(), isActive: false } as TradeSignal;
       }
@@ -126,15 +109,12 @@ export class FirebaseQueries {
     }
   }
 
-  /**
-   * Get signals by score threshold (client-side filtering for performance)
-   */
   async getSignalsByScore(minScore: number): Promise<TradeSignal[]> {
     logger.debug(`Fetching signals with score >= ${minScore}`);
     
     try {
       const q = query(
-        collection(this.db, ACTIVE_COLLECTION),
+        collection(db, ACTIVE_COLLECTION),
         where('status', '==', 'ACTIVE')
       );
 
