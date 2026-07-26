@@ -1,5 +1,5 @@
-import { useSignals } from '@/hooks/useSignals';
-import { useStats } from '@/hooks/useStats';
+import { useSignals } from '../../hooks/useSignals';
+import { useStats } from '../../hooks/useStats';
 
 export const MonthlyStats = () => {
   const { activeSignals, resolvedSignals } = useSignals();
