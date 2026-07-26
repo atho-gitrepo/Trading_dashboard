@@ -1,56 +1,25 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSignals } from '@/hooks/useSignals';
-import { useStats } from '@/hooks/useStats';
 import { TradeCard } from './TradeCard';
 import { TradeFilters } from './TradeFilters';
-import { formatters } from '@/utils/formatters';
 
-export const TradesList: React.FC = () => {
+export const TradesList = () => {
   const { activeSignals, resolvedSignals, loading } = useSignals();
-  const { stats } = useStats(activeSignals, resolvedSignals);
   const [filter, setFilter] = useState<'All' | 'Active' | 'Winners' | 'Losers' | 'BreakEven'>('All');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const allSignals = React.useMemo(() => {
-    const active = activeSignals.map(s => ({ ...s, isActive: true }));
-    const resolved = resolvedSignals.map(s => ({ ...s, isActive: false }));
-    return [...active, ...resolved];
-  }, [activeSignals, resolvedSignals]);
+  const allSignals = [...activeSignals.map(s => ({ ...s, isActive: true })), ...resolvedSignals.map(s => ({ ...s, isActive: false }))];
 
-  const filteredSignals = React.useMemo(() => {
-    let signals = allSignals;
-
-    switch (filter) {
-      case 'Active':
-        signals = signals.filter(s => s.isActive);
-        break;
-      case 'Winners':
-        signals = signals.filter(s => (s.pnl || 0) > 0);
-        break;
-      case 'Losers':
-        signals = signals.filter(s => (s.pnl || 0) < 0);
-        break;
-      case 'BreakEven':
-        signals = signals.filter(s => (s.pnl || 0) === 0);
-        break;
-      default:
-        break;
-    }
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      signals = signals.filter(s => 
-        s.symbol.toLowerCase().includes(term) ||
-        s.doc_id.toLowerCase().includes(term)
-      );
-    }
-
-    return signals.sort((a, b) => {
-      const timeA = new Date(a.entry_time || 0).getTime();
-      const timeB = new Date(b.entry_time || 0).getTime();
-      return timeB - timeA;
-    });
-  }, [allSignals, filter, searchTerm]);
+  const filteredSignals = allSignals
+    .filter(s => {
+      if (filter === 'Active') return s.isActive;
+      if (filter === 'Winners') return (s.pnl || 0) > 0;
+      if (filter === 'Losers') return (s.pnl || 0) < 0;
+      if (filter === 'BreakEven') return (s.pnl || 0) === 0;
+      return true;
+    })
+    .filter(s => s.symbol.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime());
 
   const counts = {
     total: allSignals.length,
@@ -94,9 +63,7 @@ export const TradesList: React.FC = () => {
             <p className="text-gray-400">No signals found</p>
           </div>
         ) : (
-          filteredSignals.map((signal) => (
-            <TradeCard key={signal.doc_id} signal={signal} />
-          ))
+          filteredSignals.map((signal) => <TradeCard key={signal.doc_id} signal={signal} />)
         )}
       </div>
     </div>
