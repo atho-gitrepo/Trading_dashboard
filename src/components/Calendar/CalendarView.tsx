@@ -1,26 +1,20 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSignals } from '@/hooks/useSignals';
 import { useStats } from '@/hooks/useStats';
 import { MonthlyStats } from './MonthlyStats';
 
-export const CalendarView: React.FC = () => {
+export const CalendarView = () => {
   const { activeSignals, resolvedSignals } = useSignals();
   const { dailyStats } = useStats(activeSignals, resolvedSignals);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
-  const getDaysInMonth = (month: number, year: number) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const getFirstDayOfMonth = (month: number, year: number) => {
-    return new Date(year, month, 1).getDay();
-  };
+  const getDaysInMonth = (month: number, year: number) => new Date(year, month + 1, 0).getDate();
+  const getFirstDayOfMonth = (month: number, year: number) => new Date(year, month, 1).getDay();
 
   const getDayPnl = (day: number) => {
     const date = new Date(currentYear, currentMonth, day);
-    const dateStr = date.toDateString();
-    const stat = dailyStats.find(d => new Date(d.date).toDateString() === dateStr);
+    const stat = dailyStats.find(d => new Date(d.date).toDateString() === date.toDateString());
     return stat?.pnl || 0;
   };
 
@@ -35,20 +29,9 @@ export const CalendarView: React.FC = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const pnl = getDayPnl(day);
-      const isToday = day === new Date().getDate() && 
-                      currentMonth === new Date().getMonth() &&
-                      currentYear === new Date().getFullYear();
-
       days.push(
-        <div 
-          key={day} 
-          className={`p-2 text-center rounded-lg ${
-            isToday ? 'ring-2 ring-blue-500' : ''
-          } ${pnl !== 0 ? 'bg-gray-800' : 'bg-gray-800/50'}`}
-        >
-          <div className={`text-sm ${isToday ? 'text-blue-400 font-bold' : ''}`}>
-            {day}
-          </div>
+        <div key={day} className={`p-2 text-center rounded-lg ${pnl !== 0 ? 'bg-gray-800' : 'bg-gray-800/50'}`}>
+          <div className="text-sm">{day}</div>
           {pnl !== 0 && (
             <div className={`text-xs ${pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>
               {pnl > 0 ? '+' : ''}{(pnl / 1000).toFixed(1)}K
@@ -69,14 +52,10 @@ export const CalendarView: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <button 
             onClick={() => {
-              if (currentMonth === 0) {
-                setCurrentMonth(11);
-                setCurrentYear(currentYear - 1);
-              } else {
-                setCurrentMonth(currentMonth - 1);
-              }
+              if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); } 
+              else { setCurrentMonth(currentMonth - 1); }
             }}
-            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-700 rounded-lg"
           >
             ←
           </button>
@@ -85,14 +64,10 @@ export const CalendarView: React.FC = () => {
           </h2>
           <button 
             onClick={() => {
-              if (currentMonth === 11) {
-                setCurrentMonth(0);
-                setCurrentYear(currentYear + 1);
-              } else {
-                setCurrentMonth(currentMonth + 1);
-              }
+              if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); } 
+              else { setCurrentMonth(currentMonth + 1); }
             }}
-            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-700 rounded-lg"
           >
             →
           </button>
@@ -104,9 +79,7 @@ export const CalendarView: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1">
-          {renderCalendar()}
-        </div>
+        <div className="grid grid-cols-7 gap-1">{renderCalendar()}</div>
       </div>
 
       <MonthlyStats />
