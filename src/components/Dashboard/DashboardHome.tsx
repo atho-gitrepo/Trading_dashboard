@@ -1,36 +1,72 @@
 import { useSignals } from '../../hooks/useSignals';
 import { useStats } from '../../hooks/useStats';
 import { useAuth } from '../../hooks/useAuth';
-import { StatsCard } from './StatsCard';
-import { WeeklyChart } from './WeeklyChart';
-import { EmotionSelector } from './EmotionSelector';
-import { LoadingSkeleton } from './LoadingSkeleton';
 import { formatters } from '../../utils/formatters';
+
+const StatsCard = ({ label, value, color = 'text-white' }: any) => (
+  <div className="bg-gray-800 p-3 rounded-lg">
+    <p className="text-xs text-gray-400">{label}</p>
+    <p className={`text-lg font-semibold ${color}`}>{value}</p>
+  </div>
+);
+
+const LoadingSkeleton = () => (
+  <div className="min-h-screen bg-gray-950 text-white p-4 pb-20">
+    <div className="h-7 w-32 bg-gray-800 rounded animate-pulse mb-6" />
+    <div className="h-32 bg-gray-800 rounded-xl mb-6 animate-pulse" />
+    <div className="h-24 bg-gray-800 rounded-xl mb-6 animate-pulse" />
+    <div className="h-40 bg-gray-800 rounded-xl mb-4 animate-pulse" />
+  </div>
+);
+
+const WeeklyChart = ({ data }: any) => {
+  const maxPnl = Math.max(...data.map((d: any) => Math.abs(d.pnl)), 1);
+  return (
+    <div className="bg-gray-800 rounded-xl p-4 mb-6">
+      <h3 className="text-sm mb-4">This Week</h3>
+      <div className="flex justify-between items-end h-32 gap-1">
+        {data.map((item: any, index: number) => (
+          <div key={index} className="flex flex-col items-center flex-1">
+            <div className={`w-full max-w-[32px] rounded-t ${item.pnl >= 0 ? 'bg-green-500' : 'bg-red-500'}`} 
+                 style={{ height: `${Math.max(Math.abs(item.pnl) / maxPnl * 100, 4)}%`, minHeight: '4px' }} />
+            <span className="text-xs text-gray-400 mt-1">{item.day}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const EmotionSelector = () => {
+  const [selected, setSelected] = useState(null);
+  const emotions = ['😰 Stressed', '😟 Worried', '😐 Neutral', '😌 Calm', '⚡ Sharp'];
+  
+  return (
+    <div className="bg-gray-800 rounded-xl p-4 mb-6">
+      <h3 className="text-sm text-gray-400 mb-3">How are you feeling?</h3>
+      <div className="grid grid-cols-5 gap-2">
+        {emotions.map((emotion) => (
+          <button key={emotion} onClick={() => setSelected(emotion as any)}
+            className={`p-2 rounded-lg text-xs transition-all ${selected === emotion ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}>
+            {emotion}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+import { useState } from 'react';
 
 export const DashboardHome = () => {
   const { user, loading: authLoading } = useAuth();
   const { activeSignals, resolvedSignals, loading: signalsLoading, error } = useSignals();
   const { stats, dailyStats } = useStats(activeSignals, resolvedSignals);
 
-  const weeklyData = dailyStats.slice(-7).map((d: { date: string; pnl: number }) => ({
-    day: new Date(d.date).getDate().toString(),
-    pnl: d.pnl,
-  }));
+  const weeklyData = dailyStats.slice(-7).map((d) => ({ day: new Date(d.date).getDate().toString(), pnl: d.pnl }));
 
-  if (authLoading || signalsLoading) {
-    return <LoadingSkeleton />;
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-950 text-white p-4 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 mb-2">Error loading data</p>
-          <p className="text-gray-400 text-sm">{error.message}</p>
-        </div>
-      </div>
-    );
-  }
+  if (authLoading || signalsLoading) return <LoadingSkeleton />;
+  if (error) return <div className="min-h-screen bg-gray-950 text-white p-4 text-center text-red-400">Error: {error.message}</div>;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-4 pb-20">
@@ -41,9 +77,7 @@ export const DashboardHome = () => {
         </div>
       </div>
 
-      <div className={`rounded-xl p-6 mb-6 ${
-        stats.totalPnl >= 0 ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'
-      }`}>
+      <div className={`rounded-xl p-6 mb-6 ${stats.totalPnl >= 0 ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'}`}>
         <p className="text-sm text-gray-100">Total P/L</p>
         <p className="text-3xl font-bold">{formatters.currency(stats.totalPnl)}</p>
         <div className="mt-2 flex gap-2">
@@ -57,9 +91,7 @@ export const DashboardHome = () => {
       <div className="bg-gray-800 rounded-xl p-4 mb-6">
         <div className="flex justify-between items-center">
           <h3 className="text-sm">Today</h3>
-          <span className={`text-sm ${stats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-            {formatters.currency(stats.totalPnl)}
-          </span>
+          <span className={`text-sm ${stats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>{formatters.currency(stats.totalPnl)}</span>
         </div>
         <p className="text-xs text-gray-400 mt-1">From {stats.totalResolved} trades</p>
         <div className="flex gap-4 mt-2 text-xs">
@@ -73,11 +105,7 @@ export const DashboardHome = () => {
       <WeeklyChart data={weeklyData} />
 
       <div className="grid grid-cols-2 gap-4 mt-4">
-        <StatsCard 
-          label="P&L" 
-          value={formatters.currencyShort(stats.totalPnl)} 
-          className={stats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}
-        />
+        <StatsCard label="P&L" value={formatters.currencyShort(stats.totalPnl)} color={stats.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
         <StatsCard label="Win Rate" value={`${stats.winRate.toFixed(1)}%`} />
         <StatsCard label="Active" value={stats.totalActive.toString()} />
         <StatsCard label="Profit Factor" value={stats.profitFactor === Infinity ? '∞' : stats.profitFactor.toFixed(2)} />
