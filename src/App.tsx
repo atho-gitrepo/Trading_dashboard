@@ -1,25 +1,28 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { DashboardHome } from '@/components/Dashboard/DashboardHome';
-import { TradesList } from '@/components/Trades/TradesList';
-import { CalendarView } from '@/components/Calendar/CalendarView';
-import { SuperTraderScore } from '@/components/Profile/SuperTraderScore';
-import { BottomNav } from '@/components/Navigation/BottomNav';
-import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { DashboardHome } from './components/Dashboard/DashboardHome';
+import { TradesList } from './components/Trades/TradesList';
+import { CalendarView } from './components/Calendar/CalendarView';
+import { SuperTraderScore } from './components/Profile/SuperTraderScore';
+import { BottomNav } from './components/Navigation/BottomNav';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
-const App = () => {
+function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<DashboardHome />} />
-          <Route path="/trades" element={<TradesList />} />
-          <Route path="/calendar" element={<CalendarView />} />
-          <Route path="/profile" element={<SuperTraderScore />} />
-        </Routes>
-        <BottomNav />
-      </BrowserRouter>
+      <Router>
+        <div className="relative min-h-screen bg-gray-950">
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardHome />} />
+            <Route path="/trades" element={<TradesList />} />
+            <Route path="/calendar" element={<CalendarView />} />
+            <Route path="/profile" element={<SuperTraderScore />} />
+          </Routes>
+          <BottomNav />
+        </div>
+      </Router>
     </ErrorBoundary>
   );
-};
+}
 
 export default App;
