@@ -6,7 +6,6 @@
   "deploy": {
     "startCommand": "npx serve -s dist -l 3000",
     "healthcheckPath": "/",
-    "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE"
   }
 }
