@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3000;  // ← CHANGE THIS to 3000 (not 8080)
+const PORT = 8080;  // ← CHANGE THIS to 3000 (not 8080)
 
 // Debug: Check if dist exists
 const distPath = path.join(__dirname, 'dist');
