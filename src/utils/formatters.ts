@@ -1,5 +1,3 @@
-import { format, formatDistanceToNow, parseISO } from 'date-fns';
-
 export const formatters = {
   currency: (value: number): string => {
     return new Intl.NumberFormat('en-US', {
@@ -23,20 +21,5 @@ export const formatters = {
 
   percent: (value: number): string => {
     return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
-  },
-
-  date: (date: string | Date): string => {
-    const d = typeof date === 'string' ? parseISO(date) : date;
-    return format(d, 'MMM d, yyyy h:mm a');
-  },
-
-  dateShort: (date: string | Date): string => {
-    const d = typeof date === 'string' ? parseISO(date) : date;
-    return format(d, 'MMM d');
-  },
-
-  timeAgo: (date: string | Date): string => {
-    const d = typeof date === 'string' ? parseISO(date) : date;
-    return formatDistanceToNow(d, { addSuffix: true });
   },
 };
