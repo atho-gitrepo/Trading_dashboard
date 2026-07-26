@@ -7,7 +7,7 @@ import { BottomNav } from './components/Navigation/BottomNav';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/">  {/* Add basename */}
       <div className="min-h-screen bg-gray-950 text-white pb-16">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
