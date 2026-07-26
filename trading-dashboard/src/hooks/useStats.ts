@@ -1,0 +1,133 @@
+import { useMemo } from 'react';
+import { TradeSignal, DashboardStats, DailyStats } from '@/types';
+
+export function useStats(activeSignals: TradeSignal[], resolvedSignals: TradeSignal[]): {
+  stats: DashboardStats;
+  dailyStats: DailyStats[];
+} {
+  const stats = useMemo(() => {
+    const allResolved = resolvedSignals.filter((s) => s.status !== 'ACTIVE');
+    const profitable = allResolved.filter((s) => s.status === 'PROFIT' || s.status === 'PARTIAL_PROFIT');
+    const losing = allResolved.filter((s) => s.status === 'LOSS' || s.status === 'PARTIAL_LOSS');
+    const breakEven = allResolved.filter((s) => s.status === 'BREAK_EVEN');
+
+    const totalPnl = allResolved.reduce((sum, s) => sum + (s.pnl || 0), 0);
+    const totalProfit = profitable.reduce((sum, s) => sum + (s.pnl || 0), 0);
+    const totalLoss = losing.reduce((sum, s) => sum + Math.abs(s.pnl || 0), 0);
+
+    const winRate = allResolved.length > 0 ? (profitable.length / allResolved.length) * 100 : 0;
+
+    const profitFactor = totalLoss > 0 ? totalProfit / totalLoss : totalProfit > 0 ? Infinity : 0;
+
+    const highScore = allResolved.filter((s) => (s.total_score || 0) >= 80);
+    const mediumScore = allResolved.filter((s) => (s.total_score || 0) >= 65 && (s.total_score || 0) < 80);
+    const lowScore = allResolved.filter((s) => (s.total_score || 0) < 65 && (s.total_score || 0) > 0);
+
+    const avgScore = allResolved.length > 0 ? allResolved.reduce((sum, s) => sum + (s.total_score || 0), 0) / allResolved.length : 0;
+
+    return {
+      totalActive: activeSignals.length,
+      totalResolved: allResolved.length,
+      totalProfitable: profitable.length,
+      totalLosing: losing.length,
+      totalBreakEven: breakEven.length,
+      totalHighScore: highScore.length,
+      totalMediumScore: mediumScore.length,
+      totalLowScore: lowScore.length,
+      totalPnl,
+      winRate,
+      profitFactor,
+      avgScore,
+    };
+  }, [activeSignals, resolvedSignals]);
+
+  const dailyStats = useMemo(() => {
+    const map = new Map<string, DailyStats>();
+
+    resolvedSignals.forEach((s) => {
+      const date = s.exit_time ? new Date(s.exit_time).toDateString() : s.resolved_at ? new Date(s.resolved_at).toDateString() : new Date().toDateString();
+
+      if (!map.has(date)) {
+        map.set(date, { date, pnl: 0, trades: 0, wins: 0, losses: 0 });
+      }
+
+      const daily = map.get(date)!;
+      daily.pnl += s.pnl || 0;
+      daily.trades += 1;
+      if ((s.pnl || 0) > 0) daily.wins += 1;
+      if ((s.pnl || 0) < 0) daily.losses += 1;
+    });
+
+    return Array.from(map.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }, [resolvedSignals]);
+
+  return { stats, dailyStats };
+}
+import { useMemo } from 'react';
+import { TradeSignal, DashboardStats, DailyStats } from '@/types';
+
+export function useStats(activeSignals: TradeSignal[], resolvedSignals: TradeSignal[]): {
+  stats: DashboardStats;
+  dailyStats: DailyStats[];
+} {
+  const stats = useMemo(() => {
+    const allResolved = resolvedSignals.filter((signal) => signal.status !== 'ACTIVE');
+    const profitable = allResolved.filter((signal) => signal.status === 'PROFIT' || signal.status === 'PARTIAL_PROFIT');
+    const losing = allResolved.filter((signal) => signal.status === 'LOSS' || signal.status === 'PARTIAL_LOSS');
+    const breakEven = allResolved.filter((signal) => signal.status === 'BREAK_EVEN');
+
+    const totalPnl = allResolved.reduce((sum, signal) => sum + (signal.pnl || 0), 0);
+    const totalProfit = profitable.reduce((sum, signal) => sum + (signal.pnl || 0), 0);
+    const totalLoss = losing.reduce((sum, signal) => sum + Math.abs(signal.pnl || 0), 0);
+
+    const winRate = allResolved.length > 0 ? (profitable.length / allResolved.length) * 100 : 0;
+    const profitFactor = totalLoss > 0 ? totalProfit / totalLoss : totalProfit > 0 ? Infinity : 0;
+
+    const highScore = allResolved.filter((signal) => (signal.total_score || 0) >= 80);
+    const mediumScore = allResolved.filter((signal) => (signal.total_score || 0) >= 65 && (signal.total_score || 0) < 80);
+    const lowScore = allResolved.filter((signal) => (signal.total_score || 0) < 65 && (signal.total_score || 0) > 0);
+
+    const avgScore = allResolved.length > 0 ? allResolved.reduce((sum, signal) => sum + (signal.total_score || 0), 0) / allResolved.length : 0;
+
+    return {
+      totalActive: activeSignals.length,
+      totalResolved: allResolved.length,
+      totalProfitable: profitable.length,
+      totalLosing: losing.length,
+      totalBreakEven: breakEven.length,
+      totalHighScore: highScore.length,
+      totalMediumScore: mediumScore.length,
+      totalLowScore: lowScore.length,
+      totalPnl,
+      winRate,
+      profitFactor,
+      avgScore,
+    };
+  }, [activeSignals, resolvedSignals]);
+
+  const dailyStats = useMemo(() => {
+    const map = new Map<string, DailyStats>();
+
+    resolvedSignals.forEach((signal) => {
+      const date = signal.exit_time
+        ? new Date(signal.exit_time).toDateString()
+        : signal.resolved_at
+          ? new Date(signal.resolved_at).toDateString()
+          : new Date().toDateString();
+
+      if (!map.has(date)) {
+        map.set(date, { date, pnl: 0, trades: 0, wins: 0, losses: 0 });
+      }
+
+      const daily = map.get(date)!;
+      daily.pnl += signal.pnl || 0;
+      daily.trades += 1;
+      if ((signal.pnl || 0) > 0) daily.wins += 1;
+      if ((signal.pnl || 0) < 0) daily.losses += 1;
+    });
+
+    return Array.from(map.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }, [resolvedSignals]);
+
+  return { stats, dailyStats };
+}
