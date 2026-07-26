@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;  // ← Change to 3000
+const PORT = 3000;  // ← CHANGE THIS to 3000 (not 8080)
 
 // Debug: Check if dist exists
 const distPath = path.join(__dirname, 'dist');
@@ -21,12 +21,13 @@ if (fs.existsSync(distPath)) {
   console.log('❌ dist folder NOT found!');
 }
 
-// Serve static files with logging
+// Log all requests
 app.use((req, res, next) => {
   console.log(`📥 ${req.method} ${req.url}`);
   next();
 });
 
+// Serve static files
 app.use(express.static(distPath));
 
 // Handle SPA routing
