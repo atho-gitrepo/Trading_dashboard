@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useSignals } from '@/hooks/useSignals';
-import { useStats } from '@/hooks/useStats';
+import { useSignals } from '../../hooks/useSignals';
+import { useStats } from '../../hooks/useStats';
 import { MonthlyStats } from './MonthlyStats';
 
 export const CalendarView = () => {
@@ -14,7 +14,9 @@ export const CalendarView = () => {
 
   const getDayPnl = (day: number) => {
     const date = new Date(currentYear, currentMonth, day);
-    const stat = dailyStats.find(d => new Date(d.date).toDateString() === date.toDateString());
+    const stat = dailyStats.find((d: { date: string; pnl: number }) => 
+      new Date(d.date).toDateString() === date.toDateString()
+    );
     return stat?.pnl || 0;
   };
 
