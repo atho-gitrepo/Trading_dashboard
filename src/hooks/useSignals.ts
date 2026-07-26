@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { TradeSignal } from '@/types';
-import { firebaseQueries } from '@/firebase/queries';
+import { TradeSignal } from '../types';
+import { firebaseQueries } from '../firebase/queries';
 
 export function useSignals() {
   const [activeSignals, setActiveSignals] = useState<TradeSignal[]>([]);
@@ -17,11 +17,11 @@ export function useSignals() {
     unsubscribesRef.current = [];
 
     const unsubscribeActive = firebaseQueries.subscribeActiveSignals(
-      (signals) => {
+      (signals: TradeSignal[]) => {
         setActiveSignals(signals);
         setLoading(false);
       },
-      (err) => {
+      (err: Error) => {
         setError(err);
         setLoading(false);
       }
@@ -29,10 +29,10 @@ export function useSignals() {
     unsubscribesRef.current.push(unsubscribeActive);
 
     const unsubscribeResolved = firebaseQueries.subscribeResolvedSignals(
-      (signals) => {
+      (signals: TradeSignal[]) => {
         setResolvedSignals(signals);
       },
-      (err) => {
+      (err: Error) => {
         setError(err);
       }
     );
