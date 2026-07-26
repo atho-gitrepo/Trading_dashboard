@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TradeSignal, DashboardStats, DailyStats } from '@/types';
+import { TradeSignal, DashboardStats, DailyStats } from '../types';
 
 export function useStats(activeSignals: TradeSignal[], resolvedSignals: TradeSignal[]) {
   const stats = useMemo<DashboardStats>(() => {
