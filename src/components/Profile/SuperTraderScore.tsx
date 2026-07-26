@@ -21,9 +21,7 @@ export const SuperTraderScore = () => {
           <p className="text-xs text-gray-400">Win Rate</p>
         </div>
         <div className="bg-gray-800 rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-green-400">
-            {stats.profitFactor === Infinity ? '∞' : stats.profitFactor.toFixed(2)}
-          </p>
+          <p className="text-2xl font-bold text-green-400">{stats.profitFactor === Infinity ? '∞' : stats.profitFactor.toFixed(2)}</p>
           <p className="text-xs text-gray-400">Profit Factor</p>
         </div>
         <div className="bg-gray-800 rounded-xl p-4 text-center">
