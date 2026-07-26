@@ -1,18 +1,10 @@
-import React from 'react';
-
 interface TradeFiltersProps {
   activeFilter: 'All' | 'Active' | 'Winners' | 'Losers' | 'BreakEven';
   onFilterChange: (filter: 'All' | 'Active' | 'Winners' | 'Losers' | 'BreakEven') => void;
-  counts: {
-    total: number;
-    active: number;
-    winners: number;
-    losers: number;
-    breakEven: number;
-  };
+  counts: { total: number; active: number; winners: number; losers: number; breakEven: number };
 }
 
-export const TradeFilters: React.FC<TradeFiltersProps> = ({ activeFilter, onFilterChange, counts }) => {
+export const TradeFilters = ({ activeFilter, onFilterChange, counts }: TradeFiltersProps) => {
   const filters = [
     { key: 'All' as const, label: 'All', count: counts.total },
     { key: 'Active' as const, label: 'Active', count: counts.active },
@@ -28,9 +20,7 @@ export const TradeFilters: React.FC<TradeFiltersProps> = ({ activeFilter, onFilt
           key={key}
           onClick={() => onFilterChange(key)}
           className={`px-3 py-1 rounded-lg text-xs whitespace-nowrap transition-all ${
-            activeFilter === key
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+            activeFilter === key ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
           }`}
         >
           {label} ({count})
