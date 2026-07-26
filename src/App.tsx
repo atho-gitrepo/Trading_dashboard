@@ -10,7 +10,7 @@ function App() {
   return (
     <ErrorBoundary>
       <Router>
-        <div className="relative min-h-screen bg-gray-950">
+        <div className="min-h-screen bg-gray-950 text-white pb-16">
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/dashboard" element={<DashboardHome />} />
