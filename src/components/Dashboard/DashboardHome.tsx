@@ -1,18 +1,18 @@
-import { useSignals } from '@/hooks/useSignals';
-import { useStats } from '@/hooks/useStats';
-import { useAuth } from '@/hooks/useAuth';
+import { useSignals } from '../../hooks/useSignals';
+import { useStats } from '../../hooks/useStats';
+import { useAuth } from '../../hooks/useAuth';
 import { StatsCard } from './StatsCard';
 import { WeeklyChart } from './WeeklyChart';
 import { EmotionSelector } from './EmotionSelector';
 import { LoadingSkeleton } from './LoadingSkeleton';
-import { formatters } from '@/utils/formatters';
+import { formatters } from '../../utils/formatters';
 
 export const DashboardHome = () => {
   const { user, loading: authLoading } = useAuth();
   const { activeSignals, resolvedSignals, loading: signalsLoading, error } = useSignals();
   const { stats, dailyStats } = useStats(activeSignals, resolvedSignals);
 
-  const weeklyData = dailyStats.slice(-7).map(d => ({
+  const weeklyData = dailyStats.slice(-7).map((d: { date: string; pnl: number }) => ({
     day: new Date(d.date).getDate().toString(),
     pnl: d.pnl,
   }));
