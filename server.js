@@ -7,9 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 8080;  // ← CHANGE THIS to 3000 (not 8080)
+const PORT = 8080;  // Changed to 3000
 
-// Debug: Check if dist exists
 const distPath = path.join(__dirname, 'dist');
 console.log(`📁 Looking for dist at: ${distPath}`);
 
@@ -27,13 +26,26 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files
-app.use(express.static(distPath));
+// Serve static files with proper MIME types
+app.use(express.static(distPath, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filePath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+  }
+}));
 
-// Handle SPA routing
+// Handle SPA routing - serve index.html for all non-static routes
 app.get('*', (req, res) => {
+  // Skip API routes
+  if (req.path === '/health') {
+    return res.status(200).send('OK');
+  }
+  
   const indexPath = path.join(distPath, 'index.html');
-  console.log(`📄 Serving: ${indexPath}`);
+  console.log(`📄 Serving SPA: ${indexPath}`);
   
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
@@ -43,7 +55,7 @@ app.get('*', (req, res) => {
   }
 });
 
-// Health check endpoint
+// Health check
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
