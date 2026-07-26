@@ -17,13 +17,8 @@ export const BottomNav = () => {
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-0.5 transition-all ${
-                isActive ? 'text-blue-400' : 'text-gray-400'
-              }`}
-            >
+            <button key={item.path} onClick={() => navigate(item.path)}
+              className={`flex flex-col items-center gap-0.5 transition-all ${isActive ? 'text-blue-400' : 'text-gray-400'}`}>
               <span className="text-lg">{item.icon}</span>
               <span className="text-xs">{item.label}</span>
             </button>
