@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSignals } from '@/hooks/useSignals';
+import { useSignals } from '../../hooks/useSignals';
 import { TradeCard } from './TradeCard';
 import { TradeFilters } from './TradeFilters';
 
@@ -8,17 +8,20 @@ export const TradesList = () => {
   const [filter, setFilter] = useState<'All' | 'Active' | 'Winners' | 'Losers' | 'BreakEven'>('All');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const allSignals = [...activeSignals.map(s => ({ ...s, isActive: true })), ...resolvedSignals.map(s => ({ ...s, isActive: false }))];
+  const allSignals = [
+    ...activeSignals.map(s => ({ ...s, isActive: true })),
+    ...resolvedSignals.map(s => ({ ...s, isActive: false }))
+  ];
 
   const filteredSignals = allSignals
-    .filter(s => {
+    .filter((s) => {
       if (filter === 'Active') return s.isActive;
       if (filter === 'Winners') return (s.pnl || 0) > 0;
       if (filter === 'Losers') return (s.pnl || 0) < 0;
       if (filter === 'BreakEven') return (s.pnl || 0) === 0;
       return true;
     })
-    .filter(s => s.symbol.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((s) => s.symbol.toLowerCase().includes(searchTerm.toLowerCase()))
     .sort((a, b) => new Date(b.entry_time).getTime() - new Date(a.entry_time).getTime());
 
   const counts = {
