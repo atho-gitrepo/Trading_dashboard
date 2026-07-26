@@ -1,5 +1,5 @@
-import { useSignals } from '@/hooks/useSignals';
-import { useStats } from '@/hooks/useStats';
+import { useSignals } from '../../hooks/useSignals';
+import { useStats } from '../../hooks/useStats';
 
 export const SuperTraderScore = () => {
   const { activeSignals, resolvedSignals } = useSignals();
