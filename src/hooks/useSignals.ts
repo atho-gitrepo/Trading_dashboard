@@ -12,38 +12,25 @@ export function useSignals() {
   const refresh = useCallback(() => {
     setLoading(true);
     setError(null);
-    
     unsubscribesRef.current.forEach(unsubscribe => unsubscribe());
     unsubscribesRef.current = [];
 
     const unsubscribeActive = firebaseQueries.subscribeActiveSignals(
-      (signals: TradeSignal[]) => {
-        setActiveSignals(signals);
-        setLoading(false);
-      },
-      (err: Error) => {
-        setError(err);
-        setLoading(false);
-      }
+      (signals) => { setActiveSignals(signals); setLoading(false); },
+      (err) => { setError(err); setLoading(false); }
     );
     unsubscribesRef.current.push(unsubscribeActive);
 
     const unsubscribeResolved = firebaseQueries.subscribeResolvedSignals(
-      (signals: TradeSignal[]) => {
-        setResolvedSignals(signals);
-      },
-      (err: Error) => {
-        setError(err);
-      }
+      (signals) => { setResolvedSignals(signals); },
+      (err) => { setError(err); }
     );
     unsubscribesRef.current.push(unsubscribeResolved);
   }, []);
 
   useEffect(() => {
     refresh();
-    return () => {
-      unsubscribesRef.current.forEach(unsubscribe => unsubscribe());
-    };
+    return () => { unsubscribesRef.current.forEach(unsubscribe => unsubscribe()); };
   }, [refresh]);
 
   return { activeSignals, resolvedSignals, loading, error, refresh };
