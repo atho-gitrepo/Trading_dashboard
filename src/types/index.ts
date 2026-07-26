@@ -53,12 +53,6 @@ export interface DailyStats {
   losses: number;
 }
 
-export interface EmotionState {
-  feeling: 'Stressed' | 'Worried' | 'Neutral' | 'Calm' | 'Sharp';
-  timestamp: Date;
-  userId: string;
-}
-
 export interface FilterState {
   type: 'All' | 'Active' | 'Winners' | 'Losers' | 'BreakEven';
   search: string;
